@@ -1,0 +1,6 @@
+Player1 wins.
+Player1 HP: 8
+Player2 HP: 7
+Draw.
+Player1 HP: 5
+Player2 HP: 5
