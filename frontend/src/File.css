@@ -1,0 +1,16 @@
+textarea {
+  /* background: url(http://i.imgur.com/2cOaJ.png); */
+  background-color: #282c34;
+  /* background-attachment: local; */
+  /* background-repeat: no-repeat; */
+  padding-left: 35px;
+  padding-top: 10px;
+  color: #ccc;
+  /* border-radius: 5px; */
+  /* border: 1px #ccc; */
+  box-shadow: 8px 8px 5px #999;
+  max-height: 50vh;
+  width: 40vw;
+  line-height: 1.6em;
+  font-size: 1.3em;
+}

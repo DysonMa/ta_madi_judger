@@ -3,3 +3,6 @@
 /node_modules
 /__pycache__
 /api/__pycache__
+/data
+/__test__
+TODO.md

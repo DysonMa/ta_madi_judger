@@ -15,13 +15,28 @@
 
 .App-header {
   background-color: #282c34;
-  min-height: 100vh;
+  /* min-height: 100vh; */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+}
+
+.App-body {
+  background-color: #c3ccdf;
+  min-height: 100vh;
+}
+
+.FileInfoDisplay {
+  /* display: "flex";
+  flex-direction: "column";
+  align-items: start; */
+  border: "inset";
+  width: "50%";
+  /* margin: 30; */
+  text-align: left;
 }
 
 .App-link {
