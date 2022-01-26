@@ -1,60 +1,70 @@
 from flask import request, jsonify
 from flask_restful import Resource
 import os
-
-FILE_KEYS = ["CODE", "INPUT", "ANSWER"]
-root_dir = os.path.abspath(os.path.join(__file__, "../../"))
+from api.util import Utilities
+from typing import Dict, List
 
 class RunCodeHandler(Resource):
-    def get(self):
-        return "Only POST method is allowed to generate output files"
+    def __init__(self) -> None:
+        super().__init__()
+        self.root_dir = os.path.abspath(os.path.join(__file__, "../../"))
+        self.storage_path = Utilities.get_abs_path(path=self.root_dir, fileName="data")
+        self.input_num = 0
+        self.groups = ["CODE", "INPUT", "ANSWER"]
+        self.files = {}
 
-    def post(self):
-        print(request.files)
-        if len(request.files)==0: 
-            return "No file selected"  # TODO: Error status code
-        
-        # read CODE, INPUT*N, OUTPUT*N files
+    def __save_uploading_files(self) -> None:
+        for key, file in self.files.items():
+            group = key.split("_")[0] if  "_" in key else key
+            if group in self.groups:
+                file_extention = "py" if group=="CODE" else "txt"
+                file_path = Utilities.get_abs_path(path=self.storage_path, fileName=f"{file.name}.{file_extention}")
+                file.save(file_path)
+            if group=="INPUT":
+                self.input_num += 1
 
-        # TODO: renew data in `data` folder(delete first)
-        storage_path = os.path.join(root_dir, "data")
-        if not os.path.exists(storage_path):
-            os.mkdir(storage_path)
-
-        input_num = 0
-        for fileKey, file in request.files.items():
-            type = fileKey.split("_")[0] if  "_" in fileKey else fileKey
-            if type in FILE_KEYS:
-                fileName = f"{fileKey}.py" if fileKey=="CODE" else f"{fileKey}.txt"
-                file.save(os.path.join(storage_path, fileName))
-                
-            if type=="INPUT":
-                input_num += 1
-
-        # read input files and execute `CODE.py`` to generate output files
-        for fileKey, file in request.files.items():
-            if fileKey.startswith("INPUT"):
-                inputFile = os.path.join(storage_path, f"{file.name}.txt")
+    # read input files and execute `CODE.py`` to generate output files
+    def __run_code(self) -> None:
+        for group, file in self.files.items():
+            if group.startswith("INPUT"):
+                inputFile = Utilities.get_abs_path(path=self.storage_path, fileName=f"{file.name}.txt")
                 number = file.name.split("_")[1]
-                codeFile = os.path.join(storage_path, "CODE.py")
-                outputFile = os.path.join(storage_path, f"OUTPUT_{number}.txt")
+                codeFile = Utilities.get_abs_path(path=self.storage_path, fileName="CODE.py")
+                outputFile = Utilities.get_abs_path(path=self.storage_path, fileName=f"OUTPUT_{number}.txt")
                 os.system(f'type {inputFile} | python {codeFile} > {outputFile}')
-        
-        # generate output files
-        output_filenames = []
-        output_contents = []
-        for i in range(1, input_num+1):
-            filename = f"OUTPUT_{i}"
-            filepath = os.path.join(storage_path, f"{filename}.txt")
+
+    # get all output files info 
+    def __get_output_files_info(self) -> Dict:
+        output_filenames, output_contents  = [], []
+        for i in range(1, self.input_num+1):
+            filepath = Utilities.get_abs_path(path=self.storage_path, fileName=f"OUTPUT_{i}.txt")
             output_filenames.append({
-                "name": filename
+                "name": f"OUTPUT_{i}.txt"
             })
             content = ""
             with open(filepath) as f:
                 content += f.read()
                 output_contents.append(content)
 
-        return jsonify({
+        return {
             "filename": output_filenames,
             "content": output_contents
-        })
+        }
+
+    def get(self):
+        return "Only POST method is allowed to generate output files"
+
+    def post(self):
+        self.files = request.files
+        if len(self.files)==0: 
+            return "No file selected"  # TODO: Error status code
+        
+        # read CODE, INPUT*N, OUTPUT*N files
+        Utilities.create_folder_if_not_exists()
+        self.__save_uploading_files()
+
+        # read input files and execute `CODE.py`` to generate output files
+        self.__run_code()
+        
+        # get output files info including fileName and content
+        return jsonify(self.__get_output_files_info())

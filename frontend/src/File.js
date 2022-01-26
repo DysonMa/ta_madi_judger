@@ -10,7 +10,7 @@ export const Title = () => {
     <div style={{ margin: 12 }}>
       <h2>
         <div>
-          <span style={{ color: "#2e9191" }}>{title}</span>
+          <span style={{ color: "#2e9191", fontSize: "0.8em" }}>{title}</span>
         </div>
       </h2>
     </div>
@@ -37,7 +37,7 @@ export const UploadButton = () => {
   };
 
   return withUploadBtn ? (
-    <div>
+    <div style={{ marginBottom: 22 }}>
       <input
         multiple={title === "CODE" ? false : true}
         type="file"
@@ -48,7 +48,7 @@ export const UploadButton = () => {
       />
     </div>
   ) : (
-    <div>Below is the {title} file content</div>
+    <div style={{ marginBottom: 22 }}>Below are the {title} files contents</div>
   );
 };
 
@@ -143,11 +143,11 @@ const HintMessage = () => {
   const fileContext = useContext(FileContext);
   return fileContext.withUploadBtn ? (
     <div style={{ margin: 20 }}>
-      <h3>Choose before Pressing the {fileContext.title} button</h3>
+      <h4>Choose before Pressing the {fileContext.title} button</h4>
     </div>
   ) : (
     <div style={{ margin: 20 }}>
-      <h3>Press the submit button to show the output</h3>
+      <h4>Press the submit button to show the output</h4>
     </div>
   );
 };

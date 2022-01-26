@@ -26,7 +26,7 @@ function App() {
   // run code to get generated output files from servers
   const onFileUpload = async () => {
     if (selectedCodeFiles === null || selectedInputFiles === null) {
-      alert("Please select CODE and INPUT files first");
+      alert("Please select CODE files and INPUT files first");
       return;
     }
 
@@ -47,7 +47,9 @@ function App() {
       formData.append(`ANSWER_${id + 1}`, file, file.name);
     });
 
-    const res = await axios.post("http://localhost:5000/run", formData);
+    const res = await axios
+      .post("http://localhost:5000/run", formData)
+      .catch((err) => console.log(err));
 
     console.log(res.data);
 
@@ -58,11 +60,14 @@ function App() {
   // get diff files from servers
   const onFileDiff = async () => {
     if (selectedAnswerFiles === null || selectedOutputFiles === null) {
-      alert("Please select ANSWER and generate OUTPUT files first");
+      alert("Please select ANSWER files and click Run Code button first");
       return;
     }
 
-    const res = await axios.get("http://localhost:5000/diff");
+    const res = await axios
+      .get("http://localhost:5000/diff")
+      .catch((err) => console.log(err));
+
     console.log(res.data);
 
     setDiffContent(res.data.content);
