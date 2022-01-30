@@ -13,6 +13,10 @@
 
 ![demo](./video/demo.gif)
 
+## How to start
+
+simply double click `start_prod.bat` on windows system
+
 ## Build with
 
 - python 3.8.5
