@@ -1,6 +1,7 @@
 from flask import request, jsonify
 from flask_restful import Resource
-import os
+import os, sys, traceback
+from subprocess import check_output, STDOUT, CalledProcessError
 from api.util import Utilities
 from typing import Dict, List
 
@@ -8,10 +9,14 @@ class RunCodeHandler(Resource):
     def __init__(self) -> None:
         super().__init__()
         self.root_dir = os.path.abspath(os.path.join(__file__, "../../"))
-        self.storage_path = Utilities.get_abs_path(path=self.root_dir, fileName="data")
+        self.storage_path = Utilities.get_abs_path(path=self.root_dir, fileName="staging_area")
         self.input_num = 0
         self.groups = ["CODE", "INPUT", "ANSWER"]
         self.files = {}
+        self.status = {  #TODO:
+            "code": "",
+            "msg": ""
+        }
 
     def __save_uploading_files(self) -> None:
         for key, file in self.files.items():
@@ -31,7 +36,19 @@ class RunCodeHandler(Resource):
                 number = file.name.split("_")[1]
                 codeFile = Utilities.get_abs_path(path=self.storage_path, fileName="CODE.py")
                 outputFile = Utilities.get_abs_path(path=self.storage_path, fileName=f"OUTPUT_{number}.txt")
-                os.system(f'type {inputFile} | python {codeFile} > {outputFile}')
+                try:
+                    check_output(
+    f"type {inputFile} | python {codeFile} > {outputFile}", stderr=STDOUT, shell=True)
+                    self.status = {
+                        "code": 0,
+                        "msg": "SUCCESS"
+                    }
+                except CalledProcessError as e:
+                    print(e)
+                    self.status = {
+                        "code": 1,
+                        "msg": e.output.decode("utf-8")
+                    }
 
     # get all output files info 
     def __get_output_files_info(self) -> Dict:
@@ -48,7 +65,8 @@ class RunCodeHandler(Resource):
 
         return {
             "filename": output_filenames,
-            "content": output_contents
+            "content": output_contents,
+            "status": self.status
         }
 
     def get(self):
@@ -56,11 +74,9 @@ class RunCodeHandler(Resource):
 
     def post(self):
         self.files = request.files
-        if len(self.files)==0: 
-            return "No file selected"  # TODO: Error status code
         
         # read CODE, INPUT*N, OUTPUT*N files
-        Utilities.create_folder_if_not_exists()
+        Utilities.renew_storage_folder()
         self.__save_uploading_files()
 
         # read input files and execute `CODE.py`` to generate output files

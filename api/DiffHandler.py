@@ -9,7 +9,7 @@ class DiffHandler(Resource):
     def __init__(self) -> None:
         super().__init__()
         self.root_dir = os.path.abspath(os.path.join(__file__, "../../"))
-        self.storage_path = Utilities.get_abs_path(path=self.root_dir, fileName="data")
+        self.storage_path = Utilities.get_abs_path(path=self.root_dir, fileName="staging_area")
         self.diff_num = 0
 
     def __get_diff_files_count(self) -> int:
@@ -42,9 +42,9 @@ class DiffHandler(Resource):
             content = ""
             with open(diff_file_path, "w") as f:
                 for line in diff:
-                    if not line.startswith("? "):  # TODO: "?" means line not present in either input sequence
+                    if not line.startswith("? "):  # "?" means line not present in either input sequence
                         f.write(line)  
-                        content += line 
+                        content += line
             
             diff_filenames.append({
                 "name": f"diff_{i}.txt" # needs to match the format of File Object from javascript
@@ -58,7 +58,6 @@ class DiffHandler(Resource):
 
     def get(self):
         try:
-            Utilities.create_folder_if_not_exists()
             return jsonify(self.__run_diff())
         except Exception as e:
             return e

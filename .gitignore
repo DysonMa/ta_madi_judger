@@ -3,6 +3,8 @@
 /node_modules
 /__pycache__
 /api/__pycache__
-/data
+/staging_area
 /__test__
 TODO.md
+/video/demo.mp4
+start_dev.bat

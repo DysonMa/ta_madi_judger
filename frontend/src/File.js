@@ -21,6 +21,21 @@ export const UploadButton = () => {
   const { title, withUploadBtn, setContents, setSelectedFiles } =
     useContext(FileContext);
 
+  let acceptFileType = "";
+  switch (title) {
+    case "CODE":
+      acceptFileType = ".py";
+      break;
+    case "INPUT":
+      acceptFileType = ".txt, .in";
+      break;
+    case "ANSWER":
+      acceptFileType = ".out";
+      break;
+    default:
+      acceptFileType = "*";
+  }
+
   const handleDisplayFileDetails = async (e) => {
     // `e.target.files` is an object
     const files = Array.from(e.target?.files).map((file) => {
@@ -44,6 +59,7 @@ export const UploadButton = () => {
         id="input"
         name="input"
         // className="d-none"
+        accept={acceptFileType}
         onChange={handleDisplayFileDetails}
       />
     </div>
@@ -53,7 +69,7 @@ export const UploadButton = () => {
 };
 
 const Data = () => {
-  const { contents, selectedFiles } = useContext(FileContext);
+  const { contents, selectedFiles, status } = useContext(FileContext);
 
   if (!selectedFiles || !contents) return null;
 

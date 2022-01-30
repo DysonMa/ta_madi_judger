@@ -3,6 +3,7 @@ import React, { useEffect, useState, createContext, useReducer } from "react";
 import axios from "axios";
 import { Title, UploadButton, FileInfo } from "./File";
 import { Button } from "react-bootstrap";
+import Swal from "sweetalert2";
 
 export const FileContext = createContext();
 
@@ -26,16 +27,15 @@ function App() {
   // run code to get generated output files from servers
   const onFileUpload = async () => {
     if (selectedCodeFiles === null || selectedInputFiles === null) {
-      alert("Please select CODE files and INPUT files first");
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Please select CODE files and INPUT files first",
+      });
       return;
     }
 
     const codeFile = selectedCodeFiles[0];
-
-    if (codeFile.type !== "text/x-python") {
-      alert("Not a python type!");
-      return;
-    }
 
     const formData = new FormData();
     formData.append("CODE", codeFile, codeFile.name);
@@ -55,12 +55,25 @@ function App() {
 
     setOutputContents(res.data.content);
     setSelectedOutputFiles(res.data.filename);
+
+    Swal.fire({
+      icon: res.data.status.code > 0 ? "error" : "success",
+      title: res.data.status.code > 0 ? "Oops..." : "Success",
+      text:
+        res.data.status.code > 0
+          ? res.data.status.msg
+          : "No errors occurred while executing the code",
+    });
   };
 
   // get diff files from servers
   const onFileDiff = async () => {
     if (selectedAnswerFiles === null || selectedOutputFiles === null) {
-      alert("Please select ANSWER files and click Run Code button first");
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Please select ANSWER files and click Run Code button first",
+      });
       return;
     }
 
