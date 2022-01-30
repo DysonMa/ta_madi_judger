@@ -23,3 +23,9 @@ simply double click `start_prod.bat` on windows system
 - React.js
 - flask
 - react-bootstrap
+
+## Change log
+
+### v0.1.0
+
+- satisfy basic requirements for judger
