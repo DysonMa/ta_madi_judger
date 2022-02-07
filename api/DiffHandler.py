@@ -1,5 +1,6 @@
 from flask import request, send_file, jsonify
 from flask_restful import Api, Resource
+from werkzeug.utils import secure_filename
 import os, sys
 import difflib
 from api.util import Utilities

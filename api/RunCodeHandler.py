@@ -28,7 +28,7 @@ class RunCodeHandler(Resource):
             if group=="INPUT":
                 self.input_num += 1
 
-    # read input files and execute `CODE.py`` to generate output files
+    # read input files and execute `CODE.py` to generate output files
     def __run_code(self) -> None:
         for group, file in self.files.items():
             if group.startswith("INPUT"):
@@ -79,7 +79,7 @@ class RunCodeHandler(Resource):
         Utilities.renew_storage_folder()
         self.__save_uploading_files()
 
-        # read input files and execute `CODE.py`` to generate output files
+        # read input files and execute `CODE.py` to generate output files
         self.__run_code()
         
         # get output files info including fileName and content

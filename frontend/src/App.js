@@ -49,9 +49,9 @@ function App() {
 
     const res = await axios
       .post("http://localhost:5000/run", formData)
-      .catch((err) => console.log(err));
+      .catch((err) => console.error(err));
 
-    console.log(res.data);
+    // console.log(res.data);
 
     setOutputContents(res.data.content);
     setSelectedOutputFiles(res.data.filename);
